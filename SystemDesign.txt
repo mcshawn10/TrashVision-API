@@ -1,0 +1,7 @@
+few components of this project:
+- CV model
+- (Kafka?) publisher/subscriber -> will send count to web as camera captures data
+- simple website to display results
+- database to store results
+
+everything in python for now, eventually will need to port to C++ for realtime processing
