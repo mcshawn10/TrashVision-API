@@ -3,6 +3,7 @@ import torchvision
 import torch.nn as nn
 import torchvision.models as models
 import torch.optim as optim
+from tqdm import tqdm
 
 
 
@@ -26,8 +27,9 @@ class TrashModel(nn.Module):
         
         optimizer = optim.Adam(self.parameters(), lr=0.001)
         num_epochs = 50
-        for epoch in range(num_epochs):
+        for epoch in tqdm(range(num_epochs)):
             
+            #pbar = tqdm(train_loader, desc=f'Epoch {epoch}/{num_epochs}', ncols=100)
             self.train()  # Set the model to training mode
             for inputs, labels in train_loader:
                 optimizer.zero_grad()  # Zero the gradients
@@ -35,6 +37,7 @@ class TrashModel(nn.Module):
                 loss = criterion(outputs, labels)  # Calculate loss
                 loss.backward()  # Backpropagation
                 optimizer.step()  # Update model parameters
+                #pbar.set_postfix({'Loss': loss.item()})
             
     def evaluate(self, test_loader):
         # Validation
