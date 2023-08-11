@@ -34,7 +34,7 @@ class TrashModel(nn.Module):
         criterion = nn.CrossEntropyLoss()
         
         optimizer = optim.Adam(self.parameters(), lr=0.001)
-        num_epochs = 25
+        num_epochs = 11
         
         for epoch in range(num_epochs):
             self.train()  # Set the model to training mode
@@ -50,8 +50,9 @@ class TrashModel(nn.Module):
                 optimizer.step()  # Update model parameters
                 
                 accuracy += self.calc_training_accuracy(outputs, labels)
+                epoch_accuracy = accuracy / len(train_loader)
                 loop.set_description(f"Epoch [{epoch}/{num_epochs}]")
-                loop.set_postfix(loss = loss.item(), acc=accuracy)  
+                loop.set_postfix(loss = loss.item(), acc=epoch_accuracy)  
 
 
     def evaluate(self, test_loader):
