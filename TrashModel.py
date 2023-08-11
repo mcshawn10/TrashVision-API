@@ -10,7 +10,8 @@ from tqdm import tqdm
 class TrashModel(nn.Module):
     def __init__(self, gpu):
         super(TrashModel, self).__init__()
-        self.to(gpu)
+        self.gpu = gpu
+        self.to(self.gpu)
         self.NUM_CLASSES = 12
 
         self.mobilenet = models.mobilenet_v2(pretrained=False)  
@@ -18,27 +19,41 @@ class TrashModel(nn.Module):
         self.mobilenet.classifier = nn.Sequential(nn.Linear(in_features, self.NUM_CLASSES))
     
     def forward(self, x):
+        
         return self.mobilenet(x)   
     
-    
+    def calc_training_accuracy(self, outputs, labels):
+        
+        _, predicted = torch.max(outputs, 1)  # Get class predictions
+        total = labels.size(0)  # Total number of samples
+        correct = (predicted == labels).sum().item()  # Count correct predictions
+        accuracy = correct / total
+        return accuracy
 
-    def train_custom_model(self, train_loader):
+    def train_custom_model(self, train_loader:torch.utils.data.dataloader.DataLoader):
         criterion = nn.CrossEntropyLoss()
         
         optimizer = optim.Adam(self.parameters(), lr=0.001)
-        num_epochs = 50
-        for epoch in tqdm(range(num_epochs)):
-            
-            #pbar = tqdm(train_loader, desc=f'Epoch {epoch}/{num_epochs}', ncols=100)
+        num_epochs = 25
+        
+        for epoch in range(num_epochs):
             self.train()  # Set the model to training mode
-            for inputs, labels in train_loader:
+            loop = tqdm(enumerate(train_loader), total=len(train_loader), leave = False)
+            accuracy = 0
+            for batchIndex , (inputs, labels) in loop:
+                inputs = inputs.to(device=self.gpu)
+                labels= labels.to(device=self.gpu)
                 optimizer.zero_grad()  # Zero the gradients
                 outputs = self(inputs)  # Forward pass
                 loss = criterion(outputs, labels)  # Calculate loss
                 loss.backward()  # Backpropagation
                 optimizer.step()  # Update model parameters
-                #pbar.set_postfix({'Loss': loss.item()})
-            
+                
+                accuracy += self.calc_training_accuracy(outputs, labels)
+                loop.set_description(f"Epoch [{epoch}/{num_epochs}]")
+                loop.set_postfix(loss = loss.item(), acc=accuracy)  
+
+
     def evaluate(self, test_loader):
         # Validation
         self.eval()  # Set the model to evaluation mode
