@@ -1,0 +1,18 @@
+few components of this project:
+- CV model
+- (Kafka?) publisher/subscriber -> will send count to web as camera captures data
+- simple website to display results
+- database to store results
+
+everything in python for now, eventually will need to port to C++ for realtime processing
+
+
+A very basic model has been created, definitely needs to be fine-tuned 
+Nonetheless: 
+- get opencv working, and deploy your model onto the frames that are captured,
+- if a trash is detected, then log a count to a database
+
+
+database needs to be setup
+use kafka to publish the data to the database
+
