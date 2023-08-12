@@ -1,6 +1,6 @@
 import cv2
 import torch
-import torchvision
+from torchvision.transforms import ToTensor
 from Constants import *
 from TrashModel import TrashModel
 
@@ -58,9 +58,10 @@ class CameraModule:
 
     def DetectTrash(self):
         
-        #EffNet = tf.keras.models.load_model("./EffNet_1")
         trashModel = TrashModel(GPU)
         trashModel.load_state_dict(torch.load('./TrainingAccuracyWeights/model1_weights'))
+        trashModel.eval()
+
 
         font = cv2.FONT_HERSHEY_SIMPLEX
         categories = CATEGORIES
@@ -69,14 +70,9 @@ class CameraModule:
         if not cap.isOpened():
             raise IOError("cannot open webcam")
 
-        hitting_count = 0
-        
         while cap.isOpened():
 
             success, frame = cap.read()
-            
-            #assert success
-
             
             frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
             
@@ -84,11 +80,10 @@ class CameraModule:
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             frame = cv2.resize(frame, (224, 224), interpolation=cv2.INTER_AREA)
 
-            input_arr = frame.astype("float32") / 255
-
-            prediction = EffNet.predict(np.expand_dims(input_arr, axis=0))
-            #cv2.imshow('original video', frame)
-            #print(prediction)
+            #input_arr = frame.astype("float32") / 255
+            tensor_frame = ToTensor()(frame).unsqueeze(0)  # Convert to tensor
+            #prediction = EffNet.predict(np.expand_dims(input_arr, axis=0))
+            prediction = trashModel.evaluate()
 
             i = 0
 
@@ -96,8 +91,12 @@ class CameraModule:
                 i = 0
             else: i = 1
 
-            #if current_frame % 20 == 0:
-
+            # Perform inference
+            with torch.no_grad():
+                predictions = trashModel(tensor_frame)
+            
+            # Process predictions and draw on the frame
+            # ...
             # cv2.putText(frame, 
             #             categories[i], 
             #             (5,25),
@@ -105,7 +104,8 @@ class CameraModule:
             #             (0,0,255),
             #             1,
             #             cv2.LINE_4)
-            display_prediction(frame, categories, i,font)
+            
+
             cv2.imshow('original video', frame)
         
 
