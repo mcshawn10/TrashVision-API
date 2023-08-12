@@ -80,38 +80,26 @@ class CameraModule:
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             frame = cv2.resize(frame, (224, 224), interpolation=cv2.INTER_AREA)
 
-            #input_arr = frame.astype("float32") / 255
             tensor_frame = ToTensor()(frame).unsqueeze(0)  # Convert to tensor
-            #prediction = EffNet.predict(np.expand_dims(input_arr, axis=0))
-            prediction = trashModel.evaluate()
-
-            i = 0
-
-            if prediction[0][0] <= 0.5:
-                i = 0
-            else: i = 1
-
+            
             # Perform inference
             with torch.no_grad():
                 predictions = trashModel(tensor_frame)
-            
+            predicted_class_index = predictions.argmax().item()
+            predicted_label = categories[predicted_class_index]
             # Process predictions and draw on the frame
             # ...
-            # cv2.putText(frame, 
-            #             categories[i], 
-            #             (5,25),
-            #             font, 1,
-            #             (0,0,255),
-            #             1,
-            #             cv2.LINE_4)
+            cv2.putText(frame, 
+                        predicted_label, 
+                        (5,25),
+                        font, 1,
+                        (0,0,255),
+                        1,
+                        cv2.LINE_4)
             
 
             cv2.imshow('original video', frame)
         
-
-            
-
-                    #preds = EffNet.predict(np.expand_dims(frame, axis=0))[0]
 
 
             if cv2.waitKey(5) & 0xFF == 27:
