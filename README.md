@@ -4,5 +4,5 @@ Components:
 - Camera Module (webcam)
 - Kafka Publisher
 - Database (counts trash objects)
-##Architecture
+## Architecture
 *Diagram to come later*
