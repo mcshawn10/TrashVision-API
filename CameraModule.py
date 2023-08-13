@@ -74,11 +74,11 @@ class CameraModule:
 
             success, frame = cap.read()
             
-            frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+            #frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
             
-            current_frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
+            #current_frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            frame = cv2.resize(frame, (224, 224), interpolation=cv2.INTER_AREA)
+            frame = cv2.resize(frame, (128,128), interpolation=cv2.INTER_AREA)
 
             tensor_frame = ToTensor()(frame).unsqueeze(0)  # Convert to tensor
             
@@ -97,8 +97,8 @@ class CameraModule:
                         1,
                         cv2.LINE_4)
             
-
-            cv2.imshow('original video', frame)
+            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+            cv2.imshow('TrashVision', frame)
         
 
 
