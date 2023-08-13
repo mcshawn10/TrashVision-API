@@ -1,5 +1,5 @@
 # TrashVision-API
-Components:
+## Components:
 - Computer Vision Model
 - Camera Module (webcam)
 - Kafka Publisher
