@@ -16,3 +16,13 @@ Nonetheless:
 database needs to be setup
 use kafka to publish the data to the database
 
+
+UPDATE: Aug 16 2023
+- need to fix pytorch model accuracy, dataset may be bad in the first place
+- need to fix data pipeline
+- get pytorch to run inference on tensorrt
+- opencv does what it needs to do
+
+- kafka server needs to be setup
+- DB needs to set up 
+- setup database on a website? flask?
