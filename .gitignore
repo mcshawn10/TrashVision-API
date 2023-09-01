@@ -3,3 +3,4 @@ archive.zip
 TrashData
 __pycache__
 TrainingAccuracyWeights
+.venv
