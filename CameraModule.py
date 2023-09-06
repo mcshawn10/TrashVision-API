@@ -3,13 +3,13 @@ import torch
 from torchvision.transforms import ToTensor
 from Constants import *
 from TrashModel import TrashModel
-from Producer import KafkaProducer
+from Producer import MyProducer
 # import torch.nn.functional as F
 
 class CameraModule:
 
     def __init__(self) -> None:
-        self.producer = KafkaProducer()
+        self.producer = MyProducer()
 
     def CameraCapture(self):
         trashModel = TrashModel(GPU)
@@ -54,6 +54,8 @@ class CameraModule:
                             (0,0,255),
                             1,
                             cv2.LINE_4)
+                data = {predicted_label:1}
+                producer.send('TrashVisionTopic', data)
             else: 
                 cv2.putText(frame, 
                             "UNKNOWN", 
